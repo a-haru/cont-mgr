@@ -19,7 +19,8 @@ class CreateContentAutosavesTable extends Migration
             $table->string('description', 255)->nullable()->comment('概要（ディスクリプション）');
             $table->mediumText('text')->nullable()->comment('本文');
             $table->mediumText('note')->nullable()->comment('備考');
-            $table->timestamps();
+            $table->timestamp('updated_at')->useCurrent()->nullable();
+            $table->timestamp('created_at')->useCurrent()->nullable();
         });
     }
 

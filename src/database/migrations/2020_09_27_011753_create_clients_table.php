@@ -19,7 +19,8 @@ class CreateClientsTable extends Migration
             $table->string('url', 255)->comment('サイトURL');
             $table->date('contract_activate_at')->comment('契約開始日');
             $table->date('contract_deactivate_at')->comment('契約終了日');
-            $table->timestamps();
+            $table->timestamp('updated_at')->useCurrent()->nullable();
+            $table->timestamp('created_at')->useCurrent()->nullable();
             $table->softDeletes();
         });
     }
