@@ -12,7 +12,7 @@
                 <tr v-for="(data, idx) in clients" :key="idx">
                     <td>{{data.name}}</td>
                     <td>{{data.url}}</td>
-                    <td><v-btn :to="'contents'" :small="true">記事一覧</v-btn></td>
+                    <td><v-btn :to="{name: 'content.list', params: {clientId: data.id}}" :small="true">記事一覧</v-btn></td>
                     <td><v-btn :to="{name: 'client.edit', params: {id: data.id}}" :small="true">編集</v-btn></td>
                     <td><v-btn :small="true" color="error" @click="deleteClient(data.id)">削除</v-btn></td>
                 </tr>
