@@ -2,7 +2,8 @@ import axios, { AxiosResponse } from 'axios';
 
 export const endpoints = {
     getClients: '/api/clients',
-    getClient: 'api/client'
+    getClient: 'api/client',
+    deleteClient: '/api/client'
 }
 
 export type Client = {
@@ -33,3 +34,11 @@ export function getCleint(id?: number): Promise<AxiosResponse<Client>>
         params
     });
 };
+
+export function deleteClient(id: number): Promise<AxiosResponse<boolean>>
+{
+    const params = {id};
+    return axios.delete(endpoints.deleteClient, {
+        params
+    });
+}

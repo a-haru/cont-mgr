@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
@@ -20,3 +21,4 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 Route::middleware('api')->get('/clients', 'ClientController@list')->name('client.list');
 
 Route::middleware('api')->get('/client', 'ClientController@getClient')->name('client.item');
+Route::middleware('api')->delete('/client', 'ClientController@delete')->name('client.delete');

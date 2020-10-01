@@ -38158,7 +38158,8 @@ __webpack_require__.r(__webpack_exports__);
     data() {
         return {
             clients: [],
-            isLoading: false
+            isLoading: false,
+            isDeleting: false
         };
     },
     computed: {
@@ -38179,6 +38180,16 @@ __webpack_require__.r(__webpack_exports__);
         '$route': 'fetchData'
     },
     methods: {
+        removeClient(id) {
+            const index = this.clients.findIndex((data) => {
+                return data.id === id;
+            });
+            if (index >= 0) {
+                this.clients.splice(index, 1);
+                return true;
+            }
+            return false;
+        },
         fetchData() {
             const id = parseInt(this.$route.params.id);
             Object(_config_api__WEBPACK_IMPORTED_MODULE_1__["getCleints"])()
@@ -38187,6 +38198,20 @@ __webpack_require__.r(__webpack_exports__);
             })
                 .catch(() => {
                 this.clients = [];
+            });
+        },
+        deleteClient(id) {
+            if (this.isDeleting) {
+                return;
+            }
+            this.isDeleting = true;
+            Object(_config_api__WEBPACK_IMPORTED_MODULE_1__["deleteClient"])(id)
+                .then(() => {
+                this.isDeleting = false;
+                this.removeClient(id);
+            })
+                .catch(() => {
+                this.isDeleting = false;
             });
         }
     }
@@ -38349,9 +38374,18 @@ var render = function() {
                 _c(
                   "td",
                   [
-                    _c("v-btn", { attrs: { small: true, color: "error" } }, [
-                      _vm._v("削除")
-                    ])
+                    _c(
+                      "v-btn",
+                      {
+                        attrs: { small: true, color: "error" },
+                        on: {
+                          click: function($event) {
+                            return _vm.deleteClient(data.id)
+                          }
+                        }
+                      },
+                      [_vm._v("削除")]
+                    )
                   ],
                   1
                 )
@@ -97684,7 +97718,7 @@ __webpack_require__.r(__webpack_exports__);
 /*!************************************!*\
   !*** ./resources/js/config/api.ts ***!
   \************************************/
-/*! exports provided: endpoints, CleintInit, getCleints, getCleint */
+/*! exports provided: endpoints, CleintInit, getCleints, getCleint, deleteClient */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -97693,12 +97727,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CleintInit", function() { return CleintInit; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getCleints", function() { return getCleints; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getCleint", function() { return getCleint; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "deleteClient", function() { return deleteClient; });
 /* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
 /* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_0__);
 
 const endpoints = {
     getClients: '/api/clients',
-    getClient: 'api/client'
+    getClient: 'api/client',
+    deleteClient: '/api/client'
 };
 const CleintInit = {
     id: 0,
@@ -97718,6 +97754,12 @@ function getCleint(id) {
     });
 }
 ;
+function deleteClient(id) {
+    const params = { id };
+    return axios__WEBPACK_IMPORTED_MODULE_0___default.a.delete(endpoints.deleteClient, {
+        params
+    });
+}
 
 
 /***/ }),

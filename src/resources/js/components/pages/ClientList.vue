@@ -14,7 +14,7 @@
                     <td>{{data.url}}</td>
                     <td><v-btn :to="'contents'" :small="true">記事一覧</v-btn></td>
                     <td><v-btn :to="{name: 'client.edit', params: {id: data.id}}" :small="true">編集</v-btn></td>
-                    <td><v-btn :small="true" color="error">削除</v-btn></td>
+                    <td><v-btn :small="true" color="error" @click="deleteClient(data.id)">削除</v-btn></td>
                 </tr>
             </template>
             <template v-else>
@@ -30,11 +30,12 @@
 <script lang="ts">
 import Vue from 'vue';
 import * as api from '../../config/api';
-import {getCleints, Client} from '../../config/api'
+import {getCleints, Client, deleteClient} from '../../config/api'
 
 type VMData = {
-    clients: Client[],
-    isLoading: boolean
+    clients: Client[];
+    isLoading: boolean;
+    isDeleting: boolean;
 }
 
 export default Vue.extend({
@@ -42,7 +43,8 @@ export default Vue.extend({
     {
         return {
             clients: [],
-            isLoading: false
+            isLoading: false,
+            isDeleting: false
         }
     },
     computed: {
@@ -64,6 +66,17 @@ export default Vue.extend({
         '$route': 'fetchData'
     },
     methods: {
+        removeClient(id: number): boolean
+        {
+            const index = this.clients.findIndex((data)=>{
+                return data.id === id;
+            });
+            if (index >= 0) {
+                this.clients.splice(index, 1);
+                return true;
+            }
+            return false;
+        },
         fetchData(): void
         {
             const id = parseInt(this.$route.params.id);
@@ -73,6 +86,22 @@ export default Vue.extend({
             })
             .catch(()=>{
                 this.clients = [];
+            })
+        },
+
+        deleteClient(id: number): void
+        {
+            if (this.isDeleting) {
+                return;
+            }
+            this.isDeleting = true;
+            deleteClient(id)
+            .then(()=>{
+                this.isDeleting = false;
+                this.removeClient(id);
+            })
+            .catch(()=>{
+                this.isDeleting = false;
             })
         }
     }
