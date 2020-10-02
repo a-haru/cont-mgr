@@ -1,5 +1,4 @@
 <template>
-    <div>test</div>
 </template>
 
 <style lang="scss">
