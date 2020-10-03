@@ -29,9 +29,10 @@ class ContentController extends Controller
         ]));
     }
 
-    public function edit(Request $request)
+    public function edit(int $id)
     {
-        $request->get('contentId');
+        $content = Content::find($id);
+        return response()->json($content->toJson(), 200);
     }
 
     public function store(Request $request, int $clientId)

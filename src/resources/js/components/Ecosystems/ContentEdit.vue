@@ -39,7 +39,7 @@
 import Vue from 'vue';
 import * as dayjs from 'dayjs';
 
-import {storeContent, fetchAutosaveContent, automaticallySaveContent, InitContentData, ContentData} from '../../config/api';
+import {storeContent, fetchAutosaveContent, automaticallySaveContent, InitContentData, ContentData, fetchContent} from '../../config/api';
 
 type VMData = {
     initialized: boolean;
@@ -96,7 +96,11 @@ export default Vue.extend({
         {
             return new Promise((resolve, reject) => {
                 const {clientId, contentId} = this.getParams();
-                fetchAutosaveContent(clientId, contentId)
+                fetchContent(contentId)
+                .then((res) => {
+                    this.contentData = res.data
+                    return fetchAutosaveContent(clientId, contentId);
+                })
                 .then((res) => {
                     if (Object.keys(res.data).length === 0) {
                         return resolve();

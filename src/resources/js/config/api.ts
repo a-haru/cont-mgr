@@ -87,7 +87,9 @@ export function storeContent(id: number, data: ContentData): Promise<AxiosRespon
 
 export function fetchContent(contentId: number): Promise<AxiosResponse<Content>>
 {
-    return axios.get(`/api/content/${contentId}`);
+    return axios.get(`/api/content/${contentId}`, {
+        responseType: 'json'
+    });
 }
 
 export function fetchAutosaveContent(clientId: number, contentId: number): Promise<AxiosResponse<ContentData>>
