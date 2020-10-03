@@ -28,6 +28,22 @@ class ClientController extends Controller
         return response()->json($data);
     }
 
+    public function store(Request $request)
+    {
+        $request->validate([
+            'name' => 'max:255',
+            'url' => 'max:255',
+            'contractActivateAt' => 'date',
+            'contractDeactivateAt' => 'date'
+        ]);
+
+        $client = new Client();
+        $client->fill($request->all());
+        $client->save();
+
+        return response()->json(true);
+    }
+
     public function delete(Request $request)
     {
         $id = $request->get('id');

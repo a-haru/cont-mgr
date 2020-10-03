@@ -9,4 +9,6 @@ class Client extends Model
 {
     //
     use SoftDeletes;
+
+    protected $fillable = ['name', 'url', 'contract_activate_at', 'contract_deactivate_at'];
 }
