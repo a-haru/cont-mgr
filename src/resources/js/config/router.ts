@@ -6,7 +6,9 @@ Vue.use(VueRouter);
 import ClientList from '../components/Ecosystems/ClientList.vue';
 import ClientRegister from '../components/Ecosystems/ClientRegister.vue';
 import ClientEdit from '../components/Ecosystems/ClientEdit.vue';
+
 import ContentList from '../components/Ecosystems/ContentList.vue';
+import ContentEdit from '../components/Ecosystems/ContentEdit.vue';
 import ContentRegister from '../components/Ecosystems/ContentRegister.vue';
 
 export default new VueRouter({
@@ -16,5 +18,6 @@ export default new VueRouter({
         {name: 'client.edit', path: '/client/:id/edit', component: ClientEdit},
         {name: 'content.list', path: '/contents/:clientId', component: ContentList},
         {name: 'content.register', path: '/contents/:clientId/register', component: ContentRegister},
+        {name: 'content.edit', path: '/contents/:clientId/:contentId', component: ContentEdit},
     ]
 });
