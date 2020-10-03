@@ -1,8 +1,8 @@
 import './bootstrap';
 import Vue from 'vue';
 
-import router from './config/router.ts';
-import vuetify from './config/vuetify.ts';
+import router from './config/router';
+import vuetify from './config/vuetify';
 
 import RootComponent from './components/Environments/Home.vue';
 

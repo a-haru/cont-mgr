@@ -1,4 +1,7 @@
 <template>
+    <div>
+        <router-link :to="{name: 'content.register', params: {clientId: $route.params.clientId}}">新規作成</router-link>
+    </div>
 </template>
 
 <style lang="scss">
@@ -9,7 +12,6 @@ import Vue from 'vue'
 export default Vue.extend({
     created()
     {
-        console.log(this.$route.params)
         this.fetchData();
     },
     methods: {

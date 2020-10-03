@@ -1,3 +1,5 @@
+const dayjs = require('dayjs');
+
 window._ = require('lodash');
 
 /**
@@ -40,3 +42,7 @@ window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 //     cluster: process.env.MIX_PUSHER_APP_CLUSTER,
 //     encrypted: true
 // });
+
+window.dayjs = require('dayjs');
+require('dayjs/locale/ja');
+dayjs.locale('ja');

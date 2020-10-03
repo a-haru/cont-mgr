@@ -6,15 +6,20 @@ export const endpoints = {
     deleteClient: '/api/client'
 }
 
-export type Client = {
+type ClientId = {
     id: number;
+};
+
+type StoreClient = {
     name: string;
     url: string;
     contractActivateAt: string;
     contractDeactivateAt: string;
-};
+}
 
-export const CleintInit: Client = {
+export type Client = ClientId & StoreClient;
+
+export const ClientInit: Client = {
     id: 0,
     name: '',
     url: '',
@@ -41,4 +46,39 @@ export function deleteClient(id: number): Promise<AxiosResponse<boolean>>
     return axios.delete(endpoints.deleteClient, {
         params
     });
+}
+
+// export function storeClient(data: Client)
+
+export type ContentData = {
+    title: string;
+    description: string;
+    text: string;
+    note: string;
+}
+
+export const InitContentData: ContentData = {
+    title: '',
+    description: '',
+    text: '',
+    note: ''
+}
+
+export function storeContent(id: number, data: ContentData): Promise<AxiosResponse<boolean>>
+{
+    const params = new URLSearchParams(data);
+    return axios.post(`/api/content/${id}`, params);
+}
+
+export function fetchAutosaveContent(clientId: number, contentId: number): Promise<AxiosResponse<ContentData>>
+{
+    return axios.get(`/api/content/autosave/${clientId}/${contentId}`, {
+        responseType: 'json'
+    });
+}
+
+export function automaticallySaveContent(data: ContentData, clientId: number, contentId: number): Promise<AxiosResponse<boolean>>
+{
+    const params = new URLSearchParams(data);
+    return axios.post(`/api/content/autosave/${clientId}/${contentId}`, params);
 }
