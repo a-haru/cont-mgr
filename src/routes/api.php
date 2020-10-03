@@ -24,6 +24,7 @@ Route::middleware('api')->get('/client', 'ClientController@getClient')->name('cl
 Route::middleware('api')->post('/client', 'ClientController@store')->name('client.register');
 Route::middleware('api')->delete('/client', 'ClientController@delete')->name('client.delete');
 
+Route::middleware('api')->get('/contents/{clientId?}', 'ContentController@list')->name('contents.list');
 Route::middleware('api')->get('/content/{id}')->name('content.read');
 Route::middleware('api')->post('/content/{id}', 'ContentController@store')->name('content.store');
 Route::middleware('api')->patch('/content/{id}')->name('content.update');

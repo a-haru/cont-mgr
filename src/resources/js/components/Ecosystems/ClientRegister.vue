@@ -19,6 +19,7 @@
         v-model="client.contract_deactivate_at"
         label="契約終了日"
         ></v-text-field>
+        <v-btn @click="store">登録</v-btn>
     </v-form>
 </template>
 
@@ -27,39 +28,43 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import {getCleint, Client, ClientInit} from '../../config/api';
+import {storeClient, StoreClient} from '../../config/api';
 
 type VMData = {
-    client: Client,
-    isLoading: boolean
+    client: StoreClient
 }
-const clientInit: Client = {...ClientInit};
+
+const clientDataInit: StoreClient = {
+    name: '',
+    url: '',
+    contract_activate_at: '',
+    contract_deactivate_at: ''
+}
 
 export default Vue.extend({
     data(): VMData
     {
         return {
-            isLoading: false,
-            client: clientInit
+            client: {
+                ...clientDataInit
+            }
         }
     },
-    created () {
-        this.fetchData()
-    },
-    watch: {
-        '$route': 'fetchData'
-    },
     methods: {
-        fetchData(): void
+        store(): Promise<boolean>
         {
-            const id = parseInt(this.$route.params.id);
-            getCleint(id)
-            .then((res)=>{
-                this.client = res.data;
+            return storeClient(this.client)
+            .then(()=>{
+                this.reset();
+                return true;
             })
             .catch(()=>{
-                this.client = {...ClientInit};
+                return false;
             })
+        },
+        reset(): void
+        {
+            this.client = {...clientDataInit}
         }
     }
 })
