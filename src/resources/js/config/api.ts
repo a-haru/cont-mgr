@@ -10,11 +10,11 @@ type ClientId = {
     id: number;
 };
 
-type StoreClient = {
+export type StoreClient = {
     name: string;
     url: string;
-    contractActivateAt: string;
-    contractDeactivateAt: string;
+    contract_activate_at: string;
+    contract_deactivate_at: string;
 }
 
 export type Client = ClientId & StoreClient;
@@ -23,8 +23,8 @@ export const ClientInit: Client = {
     id: 0,
     name: '',
     url: '',
-    contractActivateAt: '',
-    contractDeactivateAt: ''
+    contract_activate_at: '',
+    contract_deactivate_at: ''
 };
 
 export function getCleints(): Promise<AxiosResponse<Client[]>>
@@ -48,7 +48,14 @@ export function deleteClient(id: number): Promise<AxiosResponse<boolean>>
     });
 }
 
-// export function storeClient(data: Client)
+export function storeClient(data: StoreClient): Promise<AxiosResponse<boolean>>
+{
+    return axios.post('/api/client', data);
+}
+
+export type ContentId = {
+    id: number;
+}
 
 export type ContentData = {
     title: string;
@@ -57,11 +64,18 @@ export type ContentData = {
     note: string;
 }
 
+export type Content = ContentId & ContentData;
+
 export const InitContentData: ContentData = {
     title: '',
     description: '',
     text: '',
     note: ''
+}
+
+export function getContents(clientId: number): Promise<AxiosResponse<Content[]>>
+{
+    return axios.get(`/api/contents/${clientId}`)
 }
 
 export function storeContent(id: number, data: ContentData): Promise<AxiosResponse<boolean>>
