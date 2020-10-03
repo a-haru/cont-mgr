@@ -14,6 +14,7 @@ class CreateContentRevisionsTable extends Migration
     public function up()
     {
         Schema::create('content_revisions', function (Blueprint $table) {
+            $table->bigIncrements('id');
             $table->bigInteger('content_id');
             $table->string('title', 255)->comment('タイトル');
             $table->string('description', 255)->nullable()->comment('概要（ディスクリプション）');
@@ -22,6 +23,8 @@ class CreateContentRevisionsTable extends Migration
             $table->timestamp('updated_at')->useCurrent()->nullable();
             $table->timestamp('created_at')->useCurrent()->nullable();
             $table->softDeletes();
+
+            $table->index(('content_id'));
         });
     }
 

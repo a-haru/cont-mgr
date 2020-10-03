@@ -7,4 +7,5 @@ use Illuminate\Database\Eloquent\Model;
 class ContentAutosave extends Model
 {
     //
+    protected $fillable = ['client_id', 'content_id', 'title', 'description', 'text', 'note'];
 }

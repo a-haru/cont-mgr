@@ -15,6 +15,7 @@ class CreateContentsTable extends Migration
     {
         Schema::create('contents', function (Blueprint $table) {
             $table->bigIncrements('id');
+            $table->bigInteger('client_id')->comment('クライアントID');
             $table->string('title', 255)->comment('タイトル');
             $table->string('description', 255)->nullable()->comment('概要（ディスクリプション）');
             $table->mediumText('text')->nullable()->comment('本文');
@@ -22,6 +23,8 @@ class CreateContentsTable extends Migration
             $table->timestamp('updated_at')->useCurrent()->nullable();
             $table->timestamp('created_at')->useCurrent()->nullable();
             $table->softDeletes();
+
+            $table->index('client_id');
         });
     }
 
