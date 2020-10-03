@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ContentController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -25,7 +26,7 @@ Route::middleware('api')->post('/client', 'ClientController@store')->name('clien
 Route::middleware('api')->delete('/client', 'ClientController@delete')->name('client.delete');
 
 Route::middleware('api')->get('/contents/{clientId?}', 'ContentController@list')->name('contents.list');
-Route::middleware('api')->get('/content/{id}')->name('content.read');
+Route::middleware('api')->get('/content/{id}')->name('content.read', 'ContentController@fetchContent')->name('content.edit');
 Route::middleware('api')->post('/content/{id}', 'ContentController@store')->name('content.store');
 Route::middleware('api')->patch('/content/{id}')->name('content.update');
 Route::middleware('api')->delete('/content/{id}')->name('content.delete');

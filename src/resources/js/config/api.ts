@@ -55,6 +55,7 @@ export function storeClient(data: StoreClient): Promise<AxiosResponse<boolean>>
 
 export type ContentId = {
     id: number;
+    client_id: number;
 }
 
 export type ContentData = {
@@ -82,6 +83,11 @@ export function storeContent(id: number, data: ContentData): Promise<AxiosRespon
 {
     const params = new URLSearchParams(data);
     return axios.post(`/api/content/${id}`, params);
+}
+
+export function fetchContent(contentId: number): Promise<AxiosResponse<Content>>
+{
+    return axios.get(`/api/content/${contentId}`);
 }
 
 export function fetchAutosaveContent(clientId: number, contentId: number): Promise<AxiosResponse<ContentData>>
