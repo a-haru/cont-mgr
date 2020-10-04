@@ -79,28 +79,41 @@ export function getContents(clientId: number): Promise<AxiosResponse<Content[]>>
     return axios.get(`/api/contents/${clientId}`)
 }
 
-export function storeContent(id: number, data: ContentData): Promise<AxiosResponse<boolean>>
+export function storeContent(clientId: number, data: ContentData): Promise<AxiosResponse<boolean>>
 {
     const params = new URLSearchParams(data);
-    return axios.post(`/api/content/${id}`, params);
+    return axios.post(`/api/contents/${clientId}`, params);
 }
 
-export function fetchContent(contentId: number): Promise<AxiosResponse<Content>>
+export function updateContent(clientId: number, contentId: number, data: ContentData): Promise<AxiosResponse<boolean>>
 {
-    return axios.get(`/api/content/${contentId}`, {
+    const params = new URLSearchParams(data);
+    return axios.patch(`/api/contents/${clientId}/${contentId}`, params);
+}
+
+export function fetchContent(clientId: number, contentId: number): Promise<AxiosResponse<Content>>
+{
+    return axios.get(`/api/contents/${clientId}/${contentId}`, {
+        responseType: 'json'
+    });
+}
+
+export function deleteContent(clientId: number, contentId: number): Promise<AxiosResponse<boolean>>
+{
+    return axios.delete(`/api/contents/${clientId}/${contentId}`, {
         responseType: 'json'
     });
 }
 
 export function fetchAutosaveContent(clientId: number, contentId: number): Promise<AxiosResponse<ContentData>>
 {
-    return axios.get(`/api/content/autosave/${clientId}/${contentId}`, {
+    return axios.get(`/api/contents/autosave/${clientId}/${contentId}`, {
         responseType: 'json'
     });
 }
 
-export function automaticallySaveContent(data: ContentData, clientId: number, contentId: number): Promise<AxiosResponse<boolean>>
+export function storeAutosaveContent(data: ContentData, clientId: number, contentId: number): Promise<AxiosResponse<boolean>>
 {
     const params = new URLSearchParams(data);
-    return axios.post(`/api/content/autosave/${clientId}/${contentId}`, params);
+    return axios.post(`/api/contents/autosave/${clientId}/${contentId}`, params);
 }

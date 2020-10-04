@@ -40,7 +40,7 @@
 import Vue from 'vue';
 import * as dayjs from 'dayjs';
 
-import {storeContent, fetchAutosaveContent, automaticallySaveContent, InitContentData, ContentData} from '../../config/api';
+import {storeContent, fetchAutosaveContent, storeAutosaveContent, InitContentData, ContentData} from '../../config/api';
 
 type VMData = {
     initialized: boolean;
@@ -95,29 +95,27 @@ export default Vue.extend({
     methods: {
         initialize(): Promise<void>
         {
-            return new Promise((resolve, reject) => {
-                const {clientId, contentId} = this.getParams();
-                fetchAutosaveContent(clientId, contentId)
-                .then((res) => {
-                    if (Object.keys(res.data).length === 0) {
-                        return resolve();
-                    }
+            this.initialized = false;
+            const {clientId, contentId} = this.getParams();
+            return fetchAutosaveContent(clientId, contentId)
+            .then((res) => {
+                if (Object.keys(res.data).length === 0) {
+                    return;
+                }
 
-                    if (!confirm('自動保存されたデータが残っています。読み込みますか？')) {
-                        return resolve();
-                    }
+                if (!confirm('自動保存されたデータが残っています。読み込みますか？')) {
+                    return;
+                }
 
-                    console.log(res.data);
-                    this.contentData = res.data;
-                    resolve();
-                })
-                .catch(()=>{
-                    reject();
-                }).then(()=>{
-                    // ビューの生成時に自動保存処理を有効化
-                    this.initialized = true;
-                    this.enableAutosave();
-                });
+                console.log(res.data);
+                this.contentData = res.data;
+            })
+            .catch(()=>{
+            })
+            .then(()=>{
+                // ビューの生成時に自動保存処理を有効化
+                this.initialized = true;
+                this.enableAutosave();
             });
         },
         /**
@@ -128,7 +126,7 @@ export default Vue.extend({
         {
             if (this.editId === null) {
                 this.initializeEditStatus();
-                this.editId = setInterval(this.automaticallySaveContent, 1000 * 10);
+                this.editId = setInterval(this.storeAutosaveContent, 1000 * 10);
             }
         },
         /**
@@ -183,7 +181,7 @@ export default Vue.extend({
         /**
          * 自動保存処理
          */
-        automaticallySaveContent(): Promise<boolean>
+        storeAutosaveContent(): Promise<boolean>
         {
             return new Promise((resolve, reject) => {
 
@@ -197,7 +195,7 @@ export default Vue.extend({
                 const { clientId, contentId } = this.getParams();
 
                 // 自動保存用APIに入力値を送付 
-                automaticallySaveContent(this.contentData, clientId, contentId)
+                storeAutosaveContent(this.contentData, clientId, contentId)
                 .then(()=>{
                     // 保存した時間を保持する
                     this.autosaveTime = dayjs().valueOf();

@@ -28,7 +28,7 @@
             :disabled="!initialized"
             ></v-textarea>
             <p class="text-right">{{ autosaveTimeText }}</p>
-            <v-btn @click.prevent="storeContent" :disabled="!initialized">更新</v-btn>
+            <v-btn @click.prevent="updateContent" :disabled="!initialized">更新</v-btn>
         </v-form>
     </div>
 </template>
@@ -39,7 +39,7 @@
 import Vue from 'vue';
 import * as dayjs from 'dayjs';
 
-import {storeContent, fetchAutosaveContent, automaticallySaveContent, InitContentData, ContentData, fetchContent} from '../../config/api';
+import {updateContent, fetchAutosaveContent, storeAutosaveContent, InitContentData, ContentData, fetchContent} from '../../config/api';
 
 type VMData = {
     initialized: boolean;
@@ -89,38 +89,37 @@ export default Vue.extend({
     {
         // 画面変更などでビューが破棄される時に自動保存処理を無効化しておきます。
         this.disableAutosave();
-    }
-    ,
+    },
+    watch: {
+        '$route': 'initialize'
+    },
     methods: {
         initialize(): Promise<void>
         {
-            return new Promise((resolve, reject) => {
-                const {clientId, contentId} = this.getParams();
-                fetchContent(contentId)
-                .then((res) => {
-                    this.contentData = res.data
-                    return fetchAutosaveContent(clientId, contentId);
-                })
-                .then((res) => {
-                    if (Object.keys(res.data).length === 0) {
-                        return resolve();
-                    }
+            this.initialized = false;
+            const {clientId, contentId} = this.getParams();
+            return fetchContent(clientId, contentId)
+            .then((res) => {
+                this.contentData = res.data
+                return fetchAutosaveContent(clientId, contentId);
+            })
+            .then((res) => {
+                if (Object.keys(res.data).length === 0) {
+                    return;
+                }
 
-                    if (!confirm('自動保存されたデータが残っています。読み込みますか？')) {
-                        return resolve();
-                    }
+                if (!confirm('自動保存されたデータが残っています。読み込みますか？')) {
+                    return;
+                }
 
-                    console.log(res.data);
-                    this.contentData = res.data;
-                    resolve();
-                })
-                .catch(()=>{
-                    reject();
-                }).then(()=>{
-                    // ビューの生成時に自動保存処理を有効化
-                    this.initialized = true;
-                    this.enableAutosave();
-                });
+                this.contentData = res.data;
+            })
+            .catch(()=>{
+            })
+            .then(()=>{
+                // ビューの生成時に自動保存処理を有効化
+                this.initialized = true;
+                this.enableAutosave();
             });
         },
         /**
@@ -131,7 +130,7 @@ export default Vue.extend({
         {
             if (this.editId === null) {
                 this.initializeEditStatus();
-                this.editId = setInterval(this.automaticallySaveContent, 1000 * 10);
+                this.editId = setInterval(this.storeAutosaveContent, 1000 * 10);
             }
         },
         /**
@@ -166,9 +165,6 @@ export default Vue.extend({
         {
             this.disableAutosave()
             this.autosaveTime = null;
-            this.contentData = {
-                ...InitContentData
-            }
         },
         /**
          * URLのパラメータを取得する
@@ -186,7 +182,7 @@ export default Vue.extend({
         /**
          * 自動保存処理
          */
-        automaticallySaveContent(): Promise<boolean>
+        storeAutosaveContent(): Promise<boolean>
         {
             return new Promise((resolve, reject) => {
 
@@ -200,7 +196,7 @@ export default Vue.extend({
                 const { clientId, contentId } = this.getParams();
 
                 // 自動保存用APIに入力値を送付 
-                automaticallySaveContent(this.contentData, clientId, contentId)
+                storeAutosaveContent(this.contentData, clientId, contentId)
                 .then(()=>{
                     // 保存した時間を保持する
                     this.autosaveTime = dayjs().valueOf();
@@ -220,23 +216,22 @@ export default Vue.extend({
          * 
          * 保存後、オブジェクトで保持しているデータをリセット
          */
-        storeContent(): Promise<boolean>
+        updateContent(): Promise<boolean>
         {
-            return new Promise((resolve, reject) => {
-                const {clientId} = this.$route.params;
-                this.disableAutosave();
-                storeContent(parseInt(clientId), this.contentData)
-                .then(()=>{
-                    this.reset();
-                    resolve(true);
-                })
-                .catch((e)=>{
-                    reject(false);
-                })
-                .then(()=>{
-                    this.enableAutosave();
-                });
+            const {clientId, contentId} = this.getParams();
+            let result = false;
+            this.disableAutosave();
+            return updateContent(clientId, contentId, this.contentData)
+            .then(()=>{
+                this.reset();
+                result = true;
             })
+            .catch((e)=>{
+            })
+            .then(()=>{
+                this.enableAutosave()
+                return result;
+            });
         }
     }
 });

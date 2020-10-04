@@ -11,7 +11,7 @@
 |
 */
 
-Route::get('/', 'ContentController@index')->name('content.list');
+Route::get('/', 'HomeController@index')->name('home');
 
 Auth::routes();
 

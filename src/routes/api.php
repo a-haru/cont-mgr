@@ -15,9 +15,9 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
-});
+// Route::middleware('auth:api')->get('/user', function (Request $request) {
+//     return $request->user();
+// });
 
 Route::middleware('api')->get('/clients', 'ClientController@list')->name('client.list');
 
@@ -25,11 +25,25 @@ Route::middleware('api')->get('/client', 'ClientController@getClient')->name('cl
 Route::middleware('api')->post('/client', 'ClientController@store')->name('client.register');
 Route::middleware('api')->delete('/client', 'ClientController@delete')->name('client.delete');
 
-Route::middleware('api')->get('/contents/{clientId?}', 'ContentController@list')->name('contents.list');
-Route::middleware('api')->get('/content/{id}', 'ContentController@edit')->name('content.read');
-Route::middleware('api')->post('/content/{id}', 'ContentController@store')->name('content.store');
-Route::middleware('api')->patch('/content/{id}')->name('content.update');
-Route::middleware('api')->delete('/content/{id}')->name('content.delete');
+Route::group(['middleware' => ['api']], function() {
+    // 記事一覧
+    Route::get('/contents/{clientId?}', 'ContentController@index')->name('contents.list');
 
-Route::middleware('api')->get('/content/autosave/{clientId}/{contentId}', 'ContentController@fetchAutosave')->name('content.get_autosave');
-Route::middleware('api')->post('/content/autosave/{clientId}/{contentId}', 'ContentController@autosave')->name('content.autosave');
+    // 記事新規登録
+    Route::post('/contents/{clientId}', 'ContentController@store')->name('content.store');
+
+    // 記事情報取得
+    Route::get('/contents/{clientId}/{contentId}', 'ContentController@show')->name('content.show');
+
+    // 記事更新
+    Route::patch('/contents/{clientId}/{contentId}', 'ContentController@update')->name('content.update');
+
+    // 記事削除
+    Route::delete('/contents/{clientId}/{contentId}', 'ContentController@delete')->name('content.delete');
+
+    // 自動保存記事の取得
+    Route::get('/contents/autosave/{clientId}/{contentId}', 'ContentController@showAutosave')->name('content.show_autosave');
+
+    // 記事の自動保存
+    Route::post('/contents/autosave/{clientId}/{contentId}', 'ContentController@storeAutosave')->name('content.store_autosave');
+});

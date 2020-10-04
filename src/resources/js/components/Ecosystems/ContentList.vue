@@ -1,6 +1,6 @@
 <template>
     <div>
-        <router-link :to="{name: 'content.register', params: {clientId: $route.params.clientId}}">新規作成</router-link>
+        <router-link :to="{name: 'content.create', params: {clientId: $route.params.clientId}}">新規作成</router-link>
         <table>
             <thead>
                 <tr>
@@ -16,6 +16,7 @@
                         <td>{{data.description}}</td>
                         <td>
                             <v-btn :to="{name: 'content.edit', params: {clientId: data.client_id, contentId: data.id}}" :small="true">編集</v-btn>
+                            <v-btn @click.prevent="deleteContent(data.client_id, data.id)" :small="true" :color="'error'">削除</v-btn>
                         </td>
                     </tr>
                 </template>
@@ -33,10 +34,15 @@
 <script lang="ts">
 import Vue from 'vue'
 
-import { getContents, Content } from '../../config/api';
+import { getContents, deleteContent, Content } from '../../config/api';
 
 type VMData = {
     contents: Content[]
+}
+
+type URLParams = {
+    clientId: number;
+    contentId: number;
 }
 
 export default Vue.extend({
@@ -57,6 +63,19 @@ export default Vue.extend({
         }
     },
     methods: {
+        /**
+         * URLのパラメータを取得する
+         */
+        getParams(): URLParams
+        {
+            const rawClientId = this.$route.params.clientId;
+            const rawContentId = this.$route.params.contentId;
+
+            return {
+                clientId: Number(rawClientId),
+                contentId: rawContentId ? Number(rawContentId) : 0
+            }
+        },
         fetchData(): Promise<void>
         {
             const id = parseInt(this.$route.params.clientId);
@@ -68,6 +87,28 @@ export default Vue.extend({
 
             });
         },
+        removeContent(id: number): boolean
+        {
+            const index = this.contents.findIndex((data)=>{
+                return data.id === id;
+            });
+            if (index >= 0) {
+                this.contents.splice(index, 1);
+                return true;
+            }
+            return false;
+        },
+        deleteContent(clientId: number, contentId: number): Promise<boolean>
+        {
+            return deleteContent(clientId, contentId)
+            .then(()=>{
+                this.removeContent(contentId);
+                return true;
+            })
+            .catch(()=>{
+                return false;
+            });
+        }
     }
 });
 </script>
