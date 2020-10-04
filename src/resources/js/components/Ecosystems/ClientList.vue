@@ -1,31 +1,33 @@
 <template>
     <div>
-        <router-link :to="{name: 'client.create'}">新規作成</router-link>
-        <table>
-            <thead>
-                <tr>
-                    <th>顧客名</th>
-                    <th>サイトURL</th>
-                    <th>アクション</th>
-                </tr>
-            </thead>
-            <tbody>
-                <template v-if="clients.length !== 0">
-                    <tr v-for="(data, idx) in clients" :key="idx">
-                        <td>{{data.name}}</td>
-                        <td>{{data.url}}</td>
-                        <td>
-                            <v-btn :to="{name: 'content.list', params: {clientId: data.id}}" :small="true">記事一覧</v-btn>
-                            <v-btn :to="{name: 'client.edit', params: {id: data.id}}" :small="true">編集</v-btn>
-                            <v-btn :small="true" color="error" @click="deleteClient(data.id)">削除</v-btn>
-                        </td>
+        <v-btn :to="{name: 'client.create'}" :text="true">新規作成</v-btn>
+        <v-simple-table>
+            <template v-slot:default>
+                <thead>
+                    <tr>
+                        <th>顧客名</th>
+                        <th>サイトURL</th>
+                        <th>アクション</th>
                     </tr>
-                </template>
-                <template v-else>
-                    <tr><td colspan="3">{{ emptyMessage }}</td></tr>
-                </template>
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    <template v-if="clients.length !== 0">
+                        <tr v-for="(data, idx) in clients" :key="idx">
+                            <td>{{data.name}}</td>
+                            <td>{{data.url}}</td>
+                            <td>
+                                <v-btn :to="{name: 'content.list', params: {clientId: data.id}}" :small="true">記事一覧</v-btn>
+                                <v-btn :to="{name: 'client.edit', params: {id: data.id}}" :small="true">編集</v-btn>
+                                <v-btn :small="true" color="error" @click="deleteClient(data.id)">削除</v-btn>
+                            </td>
+                        </tr>
+                    </template>
+                    <template v-else>
+                        <tr><td colspan="3">{{ emptyMessage }}</td></tr>
+                    </template>
+                </tbody>
+            </template>
+        </v-simple-table>
     </div>
 </template>
 
