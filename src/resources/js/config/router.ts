@@ -12,6 +12,7 @@ import ContentEdit from '../components/Ecosystems/ContentEdit.vue';
 import ContentCreate from '../components/Ecosystems/ContentCreate.vue';
 
 export const routes: RouteConfig[]  = [
+    {path: '/', redirect: {name: 'client.list'}},
     {name: 'client.list', path: '/clients', component: ClientList},
     {name: 'client.register', path: '/clients/register', component: ClientRegister},
     {name: 'client.edit', path: '/client/:id/edit', component: ClientEdit},
