@@ -99,6 +99,8 @@ class ContentController extends Controller
         if (is_null($content)) {
             return response()->json(false, 404);
         }
+        $this->deleteAutosaveContent($clientId, $contentId);
+
         $content->delete();
 
         return response()->json(true, 200);
