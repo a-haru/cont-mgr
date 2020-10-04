@@ -19,11 +19,24 @@ use Illuminate\Support\Facades\Route;
 //     return $request->user();
 // });
 
-Route::middleware('api')->get('/clients', 'ClientController@list')->name('client.list');
 
-Route::middleware('api')->get('/client', 'ClientController@getClient')->name('client.item');
-Route::middleware('api')->post('/client', 'ClientController@store')->name('client.register');
-Route::middleware('api')->delete('/client', 'ClientController@delete')->name('client.delete');
+
+Route::group(['middleware' => ['api']], function() {
+    // 利用者一覧
+    Route::get('/clients', 'ClientController@index')->name('clients.list');
+
+    // 利用者情報を新規登録
+    Route::post('/clients', 'ClientController@store')->name('client.store');
+
+    // 利用者情報取得
+    Route::get('/clients/{clientId}', 'ClientController@show')->name('client.show');
+
+    // 利用者情報更新
+    Route::patch('/clients/{clientId}', 'ClientController@update')->name('client.show');
+
+    // 利用者情報削除
+    Route::delete('/clients/{clientId}', 'ClientController@delete')->name('client.delete');
+});
 
 Route::group(['middleware' => ['api']], function() {
     // 記事一覧

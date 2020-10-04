@@ -8,33 +8,41 @@ use Illuminate\Http\Response;
 
 class ClientController extends Controller
 {
-    //
-    public function list()
+    /**
+     * 利用者一覧を表示
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function index()
     {
         $list = Client::all();
         return response()->json($list);
     }
 
-    public function getClient(Request $request)
+    public function show(int $id)
     {
-        $id = $request->get('id');
+        $query = Client::select([
+            'id',
+            'name',
+            'url',
+            'contract_activate_at',
+            'contract_deactivate_at',
+        ]);
+        $client = $query->find($id);
 
-        if (is_null($id)) {
-            $data = null;
-        } else {
-            $data = Client::find($id);
+        if (is_null($client)) {
+            return response()->json(null, 404);
         }
 
-        return response()->json($data);
+        return response()->json($client);
     }
 
     public function store(Request $request)
     {
         $request->validate([
-            'name' => 'max:255',
-            'url' => 'max:255',
-            'contractActivateAt' => 'date',
-            'contractDeactivateAt' => 'date'
+            'name' => 'required|max:255',
+            'url' => 'required|max:255',
+            'contract_activate_at' => 'required|date',
+            'contract_deactivate_at' => 'required|date'
         ]);
 
         $client = new Client();
@@ -44,10 +52,27 @@ class ClientController extends Controller
         return response()->json(true);
     }
 
-    public function delete(Request $request)
+    public function update(Request $request, int $clientId)
     {
-        $id = $request->get('id');
-        $client = Client::find($id);
+        $request->validate([
+            'name' => 'required|max:255',
+            'url' => 'required|max:255',
+            'contract_activate_at' => 'required|date',
+            'contract_deactivate_at' => 'required|date'
+        ]);
+
+        $client = Client::find($clientId);
+        if (is_null($client)) {
+            return response()->json(false, 404);
+        }
+        $client->fill($request->all());
+        $client->save();
+        return response()->json(true, 200);
+    }
+
+    public function delete(int $clientId)
+    {
+        $client = Client::find($clientId);
         $isDeleted = false;
         if (!is_null($client)) {
             $isDeleted = $client->delete();

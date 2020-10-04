@@ -19,6 +19,7 @@
         v-model="client.contract_deactivate_at"
         label="契約終了日"
         ></v-text-field>
+        <v-btn @click="updateCient" :disabled="isUpdating">更新</v-btn>
     </v-form>
 </template>
 
@@ -27,11 +28,12 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import {getCleint, Client, ClientInit} from '../../config/api';
+import {fetchClient, Client, ClientInit, updateClient} from '../../config/api';
 
 type VMData = {
     client: Client,
-    isLoading: boolean
+    isLoading: boolean,
+    isUpdating: boolean
 }
 const clientInit: Client = {...ClientInit};
 
@@ -40,6 +42,7 @@ export default Vue.extend({
     {
         return {
             isLoading: false,
+            isUpdating: false,
             client: clientInit
         }
     },
@@ -53,13 +56,28 @@ export default Vue.extend({
         fetchData(): void
         {
             const id = parseInt(this.$route.params.id);
-            getCleint(id)
+            fetchClient(id)
             .then((res)=>{
                 this.client = res.data;
             })
             .catch(()=>{
                 this.client = {...ClientInit};
             })
+        },
+        updateCient(): Promise<boolean>
+        {
+            const id = parseInt(this.$route.params.id);
+            let result = false;
+            this.isUpdating = true;
+            return updateClient(id, this.client)
+            .then((res) => {
+                result = res.data;
+            })
+            .catch(() => {})
+            .then(() => {
+                this.isUpdating = false;
+                return result;
+            });
         }
     }
 })

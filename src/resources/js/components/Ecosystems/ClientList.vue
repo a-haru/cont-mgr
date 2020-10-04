@@ -1,6 +1,6 @@
 <template>
     <div>
-        <router-link :to="{name: 'client.register'}">新規作成</router-link>
+        <router-link :to="{name: 'client.create'}">新規作成</router-link>
         <table>
             <thead>
                 <tr>
@@ -14,9 +14,11 @@
                     <tr v-for="(data, idx) in clients" :key="idx">
                         <td>{{data.name}}</td>
                         <td>{{data.url}}</td>
-                        <td><v-btn :to="{name: 'content.list', params: {clientId: data.id}}" :small="true">記事一覧</v-btn></td>
-                        <td><v-btn :to="{name: 'client.edit', params: {id: data.id}}" :small="true">編集</v-btn></td>
-                        <td><v-btn :small="true" color="error" @click="deleteClient(data.id)">削除</v-btn></td>
+                        <td>
+                            <v-btn :to="{name: 'content.list', params: {clientId: data.id}}" :small="true">記事一覧</v-btn>
+                            <v-btn :to="{name: 'client.edit', params: {id: data.id}}" :small="true">編集</v-btn>
+                            <v-btn :small="true" color="error" @click="deleteClient(data.id)">削除</v-btn>
+                        </td>
                     </tr>
                 </template>
                 <template v-else>
@@ -32,8 +34,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import * as api from '../../config/api';
-import {getCleints, Client, deleteClient} from '../../config/api'
+import {fetchClients, Client, deleteClient} from '../../config/api'
 
 type VMData = {
     clients: Client[];
@@ -80,10 +81,10 @@ export default Vue.extend({
             }
             return false;
         },
-        fetchData(): void
+        fetchData(): Promise<void>
         {
             const id = parseInt(this.$route.params.id);
-            getCleints()
+            return fetchClients()
             .then((res)=>{
                 this.clients = res.data;
             })

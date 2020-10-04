@@ -1,11 +1,5 @@
 import axios, { AxiosResponse } from 'axios';
 
-export const endpoints = {
-    getClients: '/api/clients',
-    getClient: 'api/client',
-    deleteClient: '/api/client'
-}
-
 type ClientId = {
     id: number;
 };
@@ -27,30 +21,29 @@ export const ClientInit: Client = {
     contract_deactivate_at: ''
 };
 
-export function getCleints(): Promise<AxiosResponse<Client[]>>
+export function fetchClients(): Promise<AxiosResponse<Client[]>>
 {
-    return axios.get(endpoints.getClients);
+    return axios.get('/api/clients');
 };
-
-export function getCleint(id?: number): Promise<AxiosResponse<Client>>
-{
-    const params = id !== undefined ? {id} : {};
-    return axios.get(endpoints.getClient, {
-        params
-    });
-};
-
-export function deleteClient(id: number): Promise<AxiosResponse<boolean>>
-{
-    const params = {id};
-    return axios.delete(endpoints.deleteClient, {
-        params
-    });
-}
 
 export function storeClient(data: StoreClient): Promise<AxiosResponse<boolean>>
 {
-    return axios.post('/api/client', data);
+    return axios.post('/api/clients', data);
+};
+
+export function fetchClient(clientId?: number): Promise<AxiosResponse<Client>>
+{
+    return axios.get(`/api/clients/${clientId}`);
+};
+
+export function deleteClient(clientId: number): Promise<AxiosResponse<boolean>>
+{
+    return axios.delete(`/api/clients/${clientId}`);
+}
+
+export function updateClient(clientId: number, data: StoreClient)
+{
+    return axios.patch(`/api/clients/${clientId}`, data);
 }
 
 export type ContentId = {
