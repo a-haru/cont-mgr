@@ -4,12 +4,21 @@ namespace App\Http\Controllers;
 
 use App\Entities\Content;
 use App\Entities\ContentAutosave;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 
+/**
+ * ContentController
+ */
 class ContentController extends Controller
 {
-    public function index($clientId)
+
+    /**
+     * 対象クライアントの記事一覧を取得
+     *
+     * @param integer $clientId
+     * @return void
+     */
+    public function index(int $clientId)
     {
         $contents = Content::where('client_id', $clientId)->get();
         return response()->json($contents->toArray());
@@ -17,6 +26,10 @@ class ContentController extends Controller
 
     /**
      * 記事新規登録
+     *
+     * @param Request $request
+     * @param integer $clientId
+     * @return void
      */
     public function store(Request $request, int $clientId)
     {
@@ -31,6 +44,13 @@ class ContentController extends Controller
         return response()->json(json_decode($content->toJson()), 200);
     }
 
+    /**
+     * 記事の登録内容を参照
+     *
+     * @param integer $clientId
+     * @param integer $contentId
+     * @return void
+     */
     public function show(int $clientId, int $contentId)
     {
         $content = Content::firstWhere(['id' => $contentId, 'client_id' => $clientId]);
@@ -42,6 +62,14 @@ class ContentController extends Controller
         return response()->json($content->toJson(), 200);
     }
 
+    /**
+     * 記事を更新
+     *
+     * @param Request $request
+     * @param integer $clientId
+     * @param integer $contentId
+     * @return void
+     */
     public function update(Request $request, int $clientId, int $contentId)
     {
         $content = Content::firstWhere(['id' => $contentId, 'client_id' => $clientId]);
@@ -57,6 +85,13 @@ class ContentController extends Controller
         return response()->json(true, 200);
     }
 
+    /**
+     * 記事を削除
+     *
+     * @param integer $clientId
+     * @param integer $contentId
+     * @return void
+     */
     public function delete(int $clientId, int $contentId)
     {
         $content = Content::firstWhere(['id' => $contentId, 'client_id' => $clientId]);
@@ -69,6 +104,14 @@ class ContentController extends Controller
         return response()->json(true, 200);
     }
 
+        
+    /**
+     * 自動保存されたレコードを削除
+     *
+     * @param integer $clientId
+     * @param integer $contentId
+     * @return void
+     */
     private function deleteAutosaveContent(int $clientId, int $contentId): void
     {
         $autoSave = ContentAutosave::firstWhere(['client_id' => $clientId, 'content_id' => $contentId]);
@@ -77,6 +120,12 @@ class ContentController extends Controller
         }
     }
 
+    /**
+     * 登録・更新共通のバリデーション
+     *
+     * @param Request $request
+     * @return void
+     */
     private function commonValidate(Request $request)
     {
         $request->validate(([
@@ -84,13 +133,14 @@ class ContentController extends Controller
             'description' => 'max:255'
         ]));
     }
-
-    public function edit(int $id)
-    {
-        $content = Content::find($id);
-        return response()->json($content->toJson(), 200);
-    }
-
+    
+    /**
+     * 自動保存された記事を参照する
+     *
+     * @param integer $clientId
+     * @param integer $contentId
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function showAutosave(int $clientId, int $contentId)
     {
         $query = ContentAutosave::select([
@@ -110,7 +160,15 @@ class ContentController extends Controller
             return response()->json($content->toJson());
         }
     }
-
+    
+    /**
+     * 自動保存用テーブルに記事を保存する
+     *
+     * @param Request $request
+     * @param integer $clientId
+     * @param integer $contentId
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function storeAutosave(Request $request, int $clientId, int $contentId)
     {
         $this->commonValidate($request);
