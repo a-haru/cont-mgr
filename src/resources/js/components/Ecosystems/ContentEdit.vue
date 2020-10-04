@@ -100,8 +100,21 @@ export default Vue.extend({
             const {clientId, contentId} = this.getParams();
             return fetchContent(clientId, contentId)
             .then((res) => {
-                this.contentData = res.data
-                return fetchAutosaveContent(clientId, contentId);
+                this.contentData = res.data;
+                this.enableAutosave();
+                return true;
+            })
+            .catch((err) => {
+                this.$router.push({name: 'home'});
+                return false;
+            })
+            .then((res) => {
+                // finally
+                if (res) {
+                    return fetchAutosaveContent(clientId, contentId);
+                } else {
+                    return Promise.reject();
+                }
             })
             .then((res) => {
                 if (Object.keys(res.data).length === 0) {
@@ -114,12 +127,9 @@ export default Vue.extend({
 
                 this.contentData = res.data;
             })
-            .catch(()=>{
-            })
-            .then(()=>{
-                // ビューの生成時に自動保存処理を有効化
+            .catch((err) => {})
+            .then(() => {
                 this.initialized = true;
-                this.enableAutosave();
             });
         },
         /**
@@ -184,29 +194,27 @@ export default Vue.extend({
          */
         storeAutosaveContent(): Promise<boolean>
         {
-            return new Promise((resolve, reject) => {
-
+            return new Promise(() => {
                 if (!this.isEdited) {
                     // 編集されていなければ即時終了します
-                    return resolve(true);
+                    return true;
                 }
-
                 // 重複実行を防ぐため定期実行をキャンセルしておきます。
                 this.disableAutosave();
                 const { clientId, contentId } = this.getParams();
 
+                let result = false;
                 // 自動保存用APIに入力値を送付 
-                storeAutosaveContent(this.contentData, clientId, contentId)
+                return storeAutosaveContent(this.contentData, clientId, contentId)
                 .then(()=>{
                     // 保存した時間を保持する
                     this.autosaveTime = dayjs().valueOf();
-                    resolve(true);
+                    result = true;
                 })
-                .catch(()=>{
-                    reject(false);
-                })
+                .catch((err)=>{})
                 .then(()=>{
                     this.enableAutosave();
+                    return result;
                 });
             });
         },

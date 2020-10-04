@@ -157,7 +157,7 @@ class ContentController extends Controller
             'content_id' => $contentId
         ]);
         if (is_null($content)) {
-            return response()->json(null);
+            return response()->json(null, 404);
         } else {
             return response()->json($content->toJson());
         }
@@ -175,11 +175,14 @@ class ContentController extends Controller
     {
         $this->commonValidate($request);
 
+        if (!Content::where(['id' => $contentId, 'client_id' => $clientId])->exists()) {
+            return response()->json(false, 404);
+        }
         $key = [
             'client_id' => $clientId,
             'content_id' => $contentId
         ];
-        $isUpdatedOrCreated = ContentAutosave::updateOrCreate($key, $request->all());
+        ContentAutosave::updateOrCreate($key, $request->all());
 
         return response()->json(true, 200);
     }

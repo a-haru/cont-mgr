@@ -83,6 +83,7 @@ export default Vue.extend({
         },
         fetchData(): Promise<void>
         {
+            this.isLoading = true;
             const id = parseInt(this.$route.params.id);
             return fetchClients()
             .then((res)=>{
@@ -90,6 +91,9 @@ export default Vue.extend({
             })
             .catch(()=>{
                 this.clients = [];
+            })
+            .then(()=>{
+                this.isLoading = false;
             })
         },
 

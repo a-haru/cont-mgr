@@ -37,7 +37,8 @@ import Vue from 'vue'
 import { getContents, deleteContent, Content } from '../../config/api';
 
 type VMData = {
-    contents: Content[]
+    isLoading: boolean;
+    contents: Content[];
 }
 
 type URLParams = {
@@ -49,17 +50,27 @@ export default Vue.extend({
     data(): VMData
     {
         return {
+            isLoading: false,
             contents: []
         }
     },
-    created()
+    created(): void
     {
         this.fetchData();
+    },
+    watch: {
+        '$route': 'fetchData'
     },
     computed: {
         emptyMessage(): string
         {
-            return 'からです'
+            if (this.isLoading) {
+                return '読み込み中です';
+            }
+            if (this.contents.length === 0) {
+                return '表示可能なデータが存在しません';
+            }
+            return '----';
         }
     },
     methods: {
@@ -79,12 +90,14 @@ export default Vue.extend({
         fetchData(): Promise<void>
         {
             const id = parseInt(this.$route.params.clientId);
+            this.isLoading = true;
             return getContents(id)
             .then((res)=>{
                 this.contents = res.data;
             })
-            .catch(()=>{
-
+            .catch(() => {})
+            .then(() => {
+                this.isLoading = false;
             });
         },
         removeContent(id: number): boolean

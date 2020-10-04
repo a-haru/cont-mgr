@@ -12,10 +12,11 @@ const mix = require('laravel-mix');
  */
 
 mix.ts('resources/js/app.ts', 'public/js')
-   .sass('resources/sass/app.scss', 'public/css');
+   .sass('resources/sass/app.scss', 'public/css')
+   .sourceMaps(true);
 
-mix.webpackConfig({
-   resolve: {
-      extensions: ['.js', '.vue', '.ts']
-   }
-});
+// mix.webpackConfig({
+//    resolve: {
+//       extensions: ['.js', '.vue', '.ts']
+//    }
+// });
