@@ -16,7 +16,7 @@ class ContentController extends Controller
      * 対象クライアントの記事一覧を取得
      *
      * @param integer $clientId
-     * @return void
+     * @return \Illuminate\Http\JsonResponse
      */
     public function index(int $clientId)
     {
@@ -29,7 +29,7 @@ class ContentController extends Controller
      *
      * @param Request $request
      * @param integer $clientId
-     * @return void
+     * @return \Illuminate\Http\JsonResponse
      */
     public function store(Request $request, int $clientId)
     {
@@ -49,7 +49,7 @@ class ContentController extends Controller
      *
      * @param integer $clientId
      * @param integer $contentId
-     * @return void
+     * @return \Illuminate\Http\JsonResponse
      */
     public function show(int $clientId, int $contentId)
     {
@@ -68,7 +68,7 @@ class ContentController extends Controller
      * @param Request $request
      * @param integer $clientId
      * @param integer $contentId
-     * @return void
+     * @return \Illuminate\Http\JsonResponse
      */
     public function update(Request $request, int $clientId, int $contentId)
     {
@@ -90,7 +90,7 @@ class ContentController extends Controller
      *
      * @param integer $clientId
      * @param integer $contentId
-     * @return void
+     * @return \Illuminate\Http\JsonResponse
      */
     public function delete(int $clientId, int $contentId)
     {
