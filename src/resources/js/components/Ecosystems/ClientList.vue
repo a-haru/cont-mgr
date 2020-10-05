@@ -90,12 +90,16 @@ export default Vue.extend({
             return fetchClients()
             .then((res)=>{
                 this.clients = res.data;
+                return true;
             })
             .catch(()=>{
                 this.clients = [];
+                return false;
             })
-            .then(()=>{
-                this.isLoading = false;
+            .then((result)=>{
+                if (result) {
+                    this.isLoading = false;
+                }
             })
         },
 

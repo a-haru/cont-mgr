@@ -62,6 +62,7 @@ export default Vue.extend({
             })
             .catch(()=>{
                 this.client = {...ClientInit};
+                this.$router.push({name: 'home'});
             })
         },
         updateCient(): Promise<boolean>
@@ -73,7 +74,8 @@ export default Vue.extend({
             .then((res) => {
                 result = res.data;
             })
-            .catch(() => {})
+            .catch(() => {
+            })
             .then(() => {
                 this.isUpdating = false;
                 return result;
