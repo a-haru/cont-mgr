@@ -38,3 +38,9 @@ services:
     volumes:
       - ./src/webapp:/var/www
     working_dir: /var/www
+
+  go:
+    build: ./docker/go
+    tty: true
+    volumes:
+      - ./src/api:/go
