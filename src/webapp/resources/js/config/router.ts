@@ -2,14 +2,13 @@ import Vue from 'vue';
 import VueRouter, { RouteConfig } from 'vue-router';
 Vue.use(VueRouter);
 
-// import ClientList from '../components/Ecosystems/ClientList.vue';
 import ClientList from '../components/Ecosystems/ClientList.vue';
 import ClientCreate from '../components/Ecosystems/ClientCreate.vue';
 import ClientEdit from '../components/Ecosystems/ClientEdit.vue';
 
 import ContentList from '../components/Ecosystems/ContentList.vue';
-import ContentEdit from '../components/Ecosystems/ContentEdit.vue';
 import ContentCreate from '../components/Ecosystems/ContentCreate.vue';
+import ContentEdit from '../components/Ecosystems/ContentEdit.vue';
 
 export const routes: RouteConfig[]  = [
     {name: 'home', path: '/', redirect: {name: 'client.list'}},

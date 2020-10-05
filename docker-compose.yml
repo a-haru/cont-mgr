@@ -4,14 +4,14 @@ services:
   php: 
     build: ./docker/php
     volumes:
-      - ./src:/var/www
+      - ./src/webapp:/var/www
   
   nginx:
     image: nginx
     ports:
       - 80:80
     volumes:
-      - ./src:/var/www
+      - ./src/webapp:/var/www
       - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
     depends_on:
       - php
@@ -36,5 +36,5 @@ services:
     image: node:12.13-alpine
     tty: true
     volumes:
-      - ./src:/var/www
+      - ./src/webapp:/var/www
     working_dir: /var/www
